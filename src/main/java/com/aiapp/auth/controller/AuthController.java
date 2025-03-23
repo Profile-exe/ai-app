@@ -1,5 +1,6 @@
 package com.aiapp.auth.controller;
 
+import com.aiapp.auth.annotation.AllowAnonymous;
 import com.aiapp.auth.dto.LoginRequest;
 import com.aiapp.auth.dto.RegisterRequest;
 import com.aiapp.auth.dto.RegisterResposne;
@@ -20,12 +21,14 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @AllowAnonymous
     @PostMapping("/signup")
     public ResponseEntity<RegisterResposne> signUp(@RequestBody RegisterRequest registerRequest) {
         RegisterResposne response = authService.signUp(registerRequest.email(), registerRequest.password(), registerRequest.name());
         return ResponseEntity.ok(response);
     }
 
+    @AllowAnonymous
     @PostMapping("/login")
     public ResponseEntity<AuthToken> login(@RequestBody LoginRequest loginRequest) {
         AuthToken response = authService.login(loginRequest.email(), loginRequest.password());

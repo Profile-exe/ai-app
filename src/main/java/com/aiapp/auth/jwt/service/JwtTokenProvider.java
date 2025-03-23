@@ -114,4 +114,8 @@ public class JwtTokenProvider {
     public void deleteByUserId(Long userId) {
         tokenRepository.deleteById(userId);
     }
+
+    public boolean existsByMemberId(Long memberId) {
+        return tokenRepository.existsById(memberId);
+    }
 }
