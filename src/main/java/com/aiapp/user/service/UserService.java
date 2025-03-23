@@ -1,5 +1,6 @@
 package com.aiapp.user.service;
 
+import com.aiapp.user.entity.Role;
 import com.aiapp.user.entity.User;
 import com.aiapp.user.exception.AlreadyExistEmailException;
 import com.aiapp.user.exception.InvalidPasswordException;
@@ -28,6 +29,7 @@ public class UserService {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .name(name)
+                .role(Role.MEMBER)
                 .build();
 
         userRepository.save(user);

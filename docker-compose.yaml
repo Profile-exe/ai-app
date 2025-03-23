@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    labels:
+      org.springframework.boot.service-connection: postgres
+    environment:
+      #      PGUSER: admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aiapp
+    #      PGDATA: "/data/postgres"
+    ports:
+      - "5432:5432"
+    #    volumes:
+    #      - postgres:/data/postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d aiapp -U admin" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    labels:
+      org.springframework.boot.service-connection: redis
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

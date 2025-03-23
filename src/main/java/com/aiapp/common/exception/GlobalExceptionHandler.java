@@ -1,5 +1,6 @@
 package com.aiapp.common.exception;
 
+import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +33,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> makeErrorResponse(MethodArgumentNotValidException ex, ErrorCode errorCode) {
-        ErrorResponse errorResponse = new ErrorResponse(errorCode);
-
-        errorResponse.setInvalidParams(ex.getBindingResult()
+        List<ValidationError> invalidParams = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(ValidationError::of)
-                .toList());
+                .toList();
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(new ErrorResponse(errorCode, invalidParams));
     }
 }

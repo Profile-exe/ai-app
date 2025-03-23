@@ -2,24 +2,21 @@ package com.aiapp.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-public class ErrorResponse {
+public record ErrorResponse(
+        String code,
+        Integer status,
+        String message,
 
-    private final String code;
-    private final int status;
-    private final String message;
-
-    @Setter
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<ValidationError> invalidParams;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        List<ValidationError> invalidParams
+) {
 
     public ErrorResponse(ErrorCode errorCode) {
-        this.code = errorCode.getCode();
-        this.status = errorCode.getHttpStatus().value();
-        this.message = errorCode.getMessage();
+        this(errorCode, null);
+    }
+
+    public ErrorResponse(ErrorCode errorCode, List<ValidationError> invalidParams) {
+        this(errorCode.getCode(), errorCode.getHttpStatus().value(), errorCode.getMessage(), invalidParams);
     }
 }
-
