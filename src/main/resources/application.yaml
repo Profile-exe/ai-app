@@ -1,3 +1,28 @@
 spring:
   application:
     name: ai-app
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yaml
+      lifecycle-management: start_only
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${OPENAI_MODEL}
+
+custom:
+  jwt:
+    access-secret-key: ${JWT_ACCESS_SECRET_KEY}
+    refresh-secret-key: ${JWT_REFRESH_SECRET_KEY}
+    access-token-expire-time: ${JWT_ACCESS_TOKEN_EXPIRE_TIME}
+    refresh-token-expire-time: ${JWT_REFRESH_TOKEN_EXPIRE_TIME}
