@@ -42,37 +42,37 @@ public class JwtTokenProvider {
         this.tokenRepository = tokenRepository;
     }
 
-    public String generateAccessToken(Long memberId) {
+    public String generateAccessToken(Long userId) {
         Date now = new Date();
         return Jwts.builder()
-                .claim("id", memberId)
+                .claim("id", userId)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + Duration.ofSeconds(accessTokenExpireTime).toMillis()))
                 .signWith(accessSecretKey)  // JWS(JSON Web Signature)를 생성하기 위한 key 설정
                 .compact();
     }
 
-    public String generateRefreshToken(Long memberId) {
+    public String generateRefreshToken(Long userId) {
         Date now = new Date();
         String refreshToken = Jwts.builder()
-                .claim("id", memberId)
+                .claim("id", userId)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + Duration.ofSeconds(refreshTokenExpireTime).toMillis()))
                 .signWith(refreshSecretKey)  // JWS(JSON Web Signature)를 생성하기 위한 key 설정
                 .compact();
 
-        RefreshToken token = new RefreshToken(memberId, refreshToken, refreshTokenExpireTime);
+        RefreshToken token = new RefreshToken(userId, refreshToken, refreshTokenExpireTime);
         tokenRepository.save(token);    // 이미 저장되어있는 토큰이 있다면 덮어씌움
 
         return refreshToken;
     }
 
-    public Long getMemberIdFromAccessToken(String accessToken) {
+    public Long getUserIdFromAccessToken(String accessToken) {
         Claims claims = parseClaims(accessToken, TokenType.ACCESS);
         return claims.get("id", Long.class);
     }
 
-    public Long getMemberIdFromRefreshToken(String refreshToken) {
+    public Long getUserIdFromRefreshToken(String refreshToken) {
         Claims claims = parseClaims(refreshToken, TokenType.REFRESH);
         return claims.get("id", Long.class);
     }
@@ -89,7 +89,7 @@ public class JwtTokenProvider {
         return true;
     }
 
-    public boolean existsByMemberIdAndRefreshToken(String refreshToken) {
+    public boolean existsByUserIdAndRefreshToken(String refreshToken) {
         return tokenRepository.existsByToken(refreshToken);
     }
 
@@ -109,5 +109,9 @@ public class JwtTokenProvider {
             }
             throw InvalidRefreshTokenException.EXCEPTION;
         }
+    }
+
+    public void deleteByUserId(Long userId) {
+        tokenRepository.deleteById(userId);
     }
 }
